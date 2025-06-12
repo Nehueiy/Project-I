@@ -6,7 +6,7 @@ import numpy as np
 app = Flask(__name__)
 
 # Load your trained model (edit the path if needed)
-model = load_model("my_model.keras")
+model = load_model("besst_model.keras")
 class_names = ['bacterial_leaf_blight', 'brown_spot', 'healthy']
 
 @app.route('/predict', methods=['POST'])
