@@ -1,22 +1,24 @@
 import streamlit as st
 from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import img_to_array, load_img
+from tensorflow.keras.preprocessing.image import img_to_array
 import numpy as np
 from PIL import Image
+
+# ✅ FIRST Streamlit command
+st.set_page_config(page_title="Rice Leaf Disease Detection", layout="centered")
 
 # Load the trained model
 @st.cache_resource
 def load_trained_model():
-    model = load_model("plant_disease_classifier.keras")  # change if your model filename is different
+    model = load_model("plant_disease_classifier.keras")  # change filename if needed
     return model
 
 model = load_trained_model()
 
 # Class labels
-classes = ['bacterial_leaf_blight', 'brown spot', 'healthy']  
+classes = ["Bacterial Leaf Blight", "Brown Spot", "Healthy"]
 
-# Streamlit app layout
-
+# Title and instructions
 st.title("🌾 Rice Leaf Disease Detection")
 st.markdown("Upload a rice leaf image and get instant disease prediction.")
 
@@ -24,29 +26,28 @@ st.markdown("Upload a rice leaf image and get instant disease prediction.")
 uploaded_file = st.file_uploader("Choose a rice leaf image...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    # Display image
     image = Image.open(uploaded_file)
     st.image(image, caption="Uploaded Image", use_column_width=True)
 
     # Preprocess
     st.write("Processing image...")
-    img = image.resize((224, 224))  # Match your model input size
+    img = image.resize((224, 224))  # adjust to your model's input shape
     img_array = img_to_array(img) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
 
-    # Prediction
+    # Predict
     prediction = model.predict(img_array)
     predicted_class = classes[np.argmax(prediction)]
     confidence = np.max(prediction) * 100
 
-    # Display result
+    # Result
     st.success(f"**Prediction:** {predicted_class} ({confidence:.2f}% confidence)")
 
-    # Optional details
+    # Additional Info
     if predicted_class == "Brown Spot":
-        st.info("Brown Spot can be treated by reducing leaf wetness and using fungicides.")
+        st.info("Brown Spot: Control with fungicides and field sanitation.")
     elif predicted_class == "Bacterial Leaf Blight":
-        st.info("Bacterial Blight needs resistant varieties and clean water management.")
+        st.info("Bacterial Blight: Use resistant varieties and clean irrigation.")
     elif predicted_class == "Healthy":
-        st.info("Your leaf looks healthy! 🌱")
+        st.info("Healthy Leaf! Keep monitoring regularly. 🌿")
 
