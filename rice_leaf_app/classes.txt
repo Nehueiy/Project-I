@@ -1,1 +1,0 @@
- class_labels = ['bacterial_leaf_blight', 'brown spot', 'healthy']  
